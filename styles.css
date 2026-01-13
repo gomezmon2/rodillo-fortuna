@@ -1,0 +1,421 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    color: #764ba2;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.player-setup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.player-setup label {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #764ba2;
+}
+
+.player-setup select {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: 2px solid #764ba2;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+}
+
+.start-game-btn {
+    padding: 12px 30px;
+    font-size: 1.1em;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.start-game-btn:hover {
+    transform: scale(1.05);
+}
+
+.players-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.player-card {
+    background: white;
+    border: 2px solid #ddd;
+    padding: 8px 15px;
+    border-radius: 8px;
+    min-width: 120px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.player-card.active {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    transform: scale(1.1);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+}
+
+.player-card h3 {
+    margin: 0;
+    font-size: 1em;
+    color: #764ba2;
+}
+
+.player-card .points {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #667eea;
+    margin-top: 3px;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.current-turn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.current-turn h2 {
+    margin: 0;
+    font-size: 1em;
+}
+
+.category {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+}
+
+.category h3 {
+    margin: 0;
+    font-size: 1em;
+}
+
+.slot-machine {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 15px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 3px solid #ff6b6b;
+}
+
+.slot-machine h2 {
+    text-align: center;
+    color: #764ba2;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.slot-container-single {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.slot-machine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.slot-single {
+    width: 200px;
+    height: 140px;
+    background: white;
+    border: 5px solid #764ba2;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.slot-reel-single {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: top 0.1s linear;
+}
+
+.slot-item-single {
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #764ba2;
+    border-bottom: 2px solid #eee;
+    gap: 5px;
+}
+
+.slot-item-single .emoji {
+    font-size: 1.2em;
+}
+
+.slot-item-single .value {
+    font-size: 0.8em;
+}
+
+@keyframes spin {
+    0% { top: 0; }
+    100% { top: -100%; }
+}
+
+.spin-button {
+    margin-top: 10px;
+    padding: 10px 25px;
+    font-size: 1em;
+    font-weight: bold;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.spin-button:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+}
+
+.spin-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.word-display {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    min-height: 60px;
+}
+
+#wordContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.letter-box {
+    width: 35px;
+    height: 45px;
+    border: 2px solid #764ba2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #764ba2;
+    background: white;
+}
+
+.letter-box.revealed {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.letter-box.space {
+    border: none;
+    width: 20px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.letter-input, .word-guess {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+input[type="text"] {
+    padding: 12px 20px;
+    font-size: 1em;
+    border: 2px solid #764ba2;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+#letterInput {
+    width: 120px;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    height: 60px;
+}
+
+#letterInput::placeholder {
+    font-size: 0.6em;
+    font-weight: normal;
+}
+
+#wordInput {
+    flex: 1;
+    max-width: 300px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 1em;
+    background: #764ba2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover:not(:disabled) {
+    background: #667eea;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.new-game {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 15px 30px;
+    font-size: 1.1em;
+    font-weight: bold;
+    align-self: center;
+}
+
+.message {
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 0.95em;
+    font-weight: bold;
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    color: #495057;
+}
+
+.message.success {
+    background: #51cf66;
+    color: white;
+}
+
+.message.error {
+    background: #ff6b6b;
+    color: white;
+}
+
+.message.info {
+    background: #4dabf7;
+    color: white;
+}
+
+.stats {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.stats p {
+    font-size: 1.1em;
+    color: #495057;
+}
+
+#guessedLetters {
+    font-weight: bold;
+    color: #764ba2;
+    letter-spacing: 3px;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    #wheel {
+        width: 300px;
+        height: 300px;
+    }
+
+    .letter-box {
+        width: 40px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+}

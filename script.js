@@ -216,6 +216,12 @@ function inicializarRodillo() {
 function girarSlots() {
     if (girando) return;
 
+    // Verificar si ya hay un valor pendiente de usar
+    if (juegoActual.valorActualSlot !== 0 && juegoActual.valorActualSlot !== "💀" && juegoActual.valorActualSlot !== "⏸️") {
+        mostrarMensaje('¡Debes adivinar una letra antes de girar de nuevo!', 'error');
+        return;
+    }
+
     girando = true;
     juegoActual.girando = true;
     document.getElementById('spinBtn').disabled = true;
@@ -512,7 +518,8 @@ function adivinarLetra() {
             manejarVictoria(jugadorActual);
         }
 
-        // No reseteamos el valor, puede seguir adivinando
+        // Resetear valor para que pueda girar de nuevo
+        juegoActual.valorActualSlot = 0;
     } else {
         mostrarMensaje(`La letra ${letra} no está en la palabra ❌ ${jugadorActual.nombre} pierde el turno`, 'error');
         // Reseteamos el valor y cambiamos de turno

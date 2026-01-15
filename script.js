@@ -1,3 +1,102 @@
+// Sistema de sonidos
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+function reproducirSonido(tipo) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    switch(tipo) {
+        case 'giro':
+            // Sonido de giro tipo "tick-tick-tick"
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialDecayTo = 0.01;
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.05);
+            break;
+
+        case 'resultado':
+            // Sonido al parar el rodillo
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+            break;
+
+        case 'correcto':
+            // Sonido alegre de letra correcta
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523, audioContext.currentTime); // Do
+            oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1); // Mi
+            oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2); // Sol
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+            break;
+
+        case 'incorrecto':
+            // Sonido de error
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+            break;
+
+        case 'quiebra':
+            // Sonido dramático de quiebra
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.8);
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.8);
+            break;
+
+        case 'victoria':
+            // Fanfarria de victoria
+            const notas = [523, 659, 784, 1047]; // Do Mi Sol Do alto
+            notas.forEach((freq, i) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.15);
+                gain.gain.setValueAtTime(0.3, audioContext.currentTime + i * 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.15 + 0.3);
+                osc.start(audioContext.currentTime + i * 0.15);
+                osc.stop(audioContext.currentTime + i * 0.15 + 0.3);
+            });
+            return; // Salir porque ya manejamos los osciladores
+    }
+}
+
+// Sonido continuo del giro
+let intervaloSonidoGiro = null;
+
+function iniciarSonidoGiro() {
+    intervaloSonidoGiro = setInterval(() => reproducirSonido('giro'), 100);
+}
+
+function detenerSonidoGiro() {
+    if (intervaloSonidoGiro) {
+        clearInterval(intervaloSonidoGiro);
+        intervaloSonidoGiro = null;
+    }
+    reproducirSonido('resultado');
+}
+
 // Configuración del juego
 const palabras = [
     // Animales
@@ -225,6 +324,7 @@ function girarSlots() {
     girando = true;
     juegoActual.girando = true;
     document.getElementById('spinBtn').disabled = true;
+    iniciarSonidoGiro();
 
     const reel = document.getElementById('reel');
     const duracion = 3000;
@@ -247,6 +347,7 @@ function girarSlots() {
         } else {
             // Posición final exacta
             reel.style.top = `-${(valoresSlot.length + indiceFinal) * 140}px`;
+            detenerSonidoGiro();
 
             setTimeout(() => {
                 determinarResultado(valorFinal);
@@ -266,6 +367,7 @@ function determinarResultado(valor) {
 
     // Verificar si hay quiebra
     if (valor === "💀") {
+        reproducirSonido('quiebra');
         jugadorActual.puntos = 0;
         juegoActual.valorActualSlot = 0;
         mostrarMensaje(`💀 ¡QUIEBRA! ${jugadorActual.nombre} perdió todos sus puntos`, 'error');
@@ -276,6 +378,7 @@ function determinarResultado(valor) {
 
     // Verificar si hay pierde turno
     if (valor === "⏸️") {
+        reproducirSonido('incorrecto');
         juegoActual.valorActualSlot = 0;
         mostrarMensaje(`⏸️ ${jugadorActual.nombre} pierde el turno`, 'info');
         setTimeout(() => cambiarTurno(), 2000);
@@ -349,6 +452,9 @@ function actualizarTurnoActual() {
 function cambiarTurno() {
     juegoActual.turnoActual = (juegoActual.turnoActual + 1) % juegoActual.numeroJugadores;
     juegoActual.valorActualSlot = 0;
+    girando = false;
+    juegoActual.girando = false;
+    document.getElementById('spinBtn').disabled = false;
     actualizarTurnoActual();
 }
 
@@ -506,6 +612,7 @@ function adivinarLetra() {
     const jugadorActual = juegoActual.jugadores[juegoActual.turnoActual];
 
     if (encontrada) {
+        reproducirSonido('correcto');
         const puntosPorLetra = juegoActual.valorActualSlot * contador * juegoActual.multiplicadorPuntos;
         jugadorActual.puntos += puntosPorLetra;
 
@@ -515,12 +622,15 @@ function adivinarLetra() {
         mostrarPalabra();
 
         if (verificarVictoria()) {
+            reproducirSonido('victoria');
             manejarVictoria(jugadorActual);
         }
 
-        // Resetear valor para que pueda girar de nuevo
+        // Resetear valor y habilitar botón para que pueda girar de nuevo
         juegoActual.valorActualSlot = 0;
+        document.getElementById('spinBtn').disabled = false;
     } else {
+        reproducirSonido('incorrecto');
         mostrarMensaje(`La letra ${letra} no está en la palabra ❌ ${jugadorActual.nombre} pierde el turno`, 'error');
         // Reseteamos el valor y cambiamos de turno
         juegoActual.valorActualSlot = 0;
@@ -542,6 +652,7 @@ function adivinarPalabra() {
     }
 
     if (palabra === juegoActual.palabraActual) {
+        reproducirSonido('victoria');
         for (let letra of juegoActual.palabraActual) {
             juegoActual.letrasReveladas.add(letra);
         }
@@ -555,6 +666,7 @@ function adivinarPalabra() {
 
         setTimeout(() => manejarVictoria(jugadorActual), 2000);
     } else {
+        reproducirSonido('incorrecto');
         jugadorActual.puntos = Math.max(0, jugadorActual.puntos - 500);
         actualizarPuntosJugador();
         mostrarMensaje(`Palabra incorrecta. ${jugadorActual.nombre} -500 puntos ❌`, 'error');
